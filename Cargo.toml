@@ -1,0 +1,10 @@
+[package]
+name = "unifetch"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.40", features = ["derive"] }
+sysinfo = "0.35.2"
+wmi = "0.17.2"
+colored = "3.0.0"

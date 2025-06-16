@@ -52,7 +52,7 @@ impl Component for DiskInfo {
 
 #[cfg(test)]
 mod tests {
-    use sysinfo::Disks;
+    use sysinfo::{Disks, System};
     use crate::system::disk::DiskInfo;
 
     #[test]
@@ -71,5 +71,7 @@ mod tests {
         assert_eq!(disk_info.file_system, "NTFS");
 
         println!("{:#?}", Disks::new_with_refreshed_list().list());
+
+        let sys = System::new_all();
     }
 }

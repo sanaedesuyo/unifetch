@@ -15,6 +15,7 @@ fn main() {
         ComponentType::Cpu,
         ComponentType::Gpu,
         ComponentType::Disk,
+        ComponentType::Memory,
     );
 
 

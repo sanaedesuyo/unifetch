@@ -7,6 +7,7 @@ pub enum ComponentType {
     Cpu,
     Gpu,
     Disk,
+    Memory,
 }
 
 pub fn grab(sys: &mut System, component_type: &ComponentType) -> Result<Vec<Box<dyn Component>>, WMIError> {
@@ -16,6 +17,7 @@ pub fn grab(sys: &mut System, component_type: &ComponentType) -> Result<Vec<Box<
         ComponentType::Cpu => info_grab::CpuGrabber::grab(&sys),
         ComponentType::Gpu => info_grab::GpuGrabber::grab(&sys),
         ComponentType::Disk => info_grab::DiskGrabber::grab(&sys),
+        ComponentType::Memory => {info_grab::MemoryGrabber::grab(&sys)},
     }
 }
 
@@ -29,6 +31,7 @@ pub mod info_grab {
 
     #[cfg(target_os = "windows")]
     use wmi::{WMIError};
+    use crate::system::memory::MemoryInfo;
 
     pub trait Grabber {
         fn grab(sys: &System) -> Result<Vec<Box<dyn Component>>, WMIError>;
@@ -140,6 +143,22 @@ pub mod info_grab {
             }
 
             Ok(disk_info)
+        }
+    }
+
+    pub struct MemoryGrabber;
+    impl Grabber for MemoryGrabber {
+        fn grab(sys: &System) -> Result<Vec<Box<dyn Component>>, WMIError> {
+            let (used, total) = (sys.used_memory(), sys.total_memory());
+
+            let memory_info = vec![Box::new(
+                MemoryInfo::new(
+                    total,
+                    total - used,
+                )
+            ) as Box<dyn Component>];
+
+            Ok(memory_info)
         }
     }
 }

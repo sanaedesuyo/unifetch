@@ -1,4 +1,4 @@
-use sysinfo::System;
+use colored::Colorize;
 use crate::cli::args::DisplayStyle;
 use crate::system::component::Component;
 
@@ -21,7 +21,7 @@ impl MemoryInfo {
 
 impl Component for MemoryInfo {
     fn get_info(&self, style: DisplayStyle) -> String {
-        let info = String::from("Memory:");
+        let info = format!("{}:", "Memory".blue());
 
         let (used, total) = (self.total_memory as f64 - self.free_memory as f64, self.total_memory as f64);
 
@@ -36,7 +36,7 @@ impl Component for MemoryInfo {
             return info;
         }
 
-        let info = format!("{}\n\t- Occupancy: {:.2}%", info, used / total * 100f64);
+        let info = format!("{}\n\t- {}: {:.2}%", info, "Occupancy".yellow(), used / total * 100f64);
 
         info
     }

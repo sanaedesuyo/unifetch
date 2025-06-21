@@ -16,6 +16,7 @@ fn main() {
         ComponentType::Gpu,
         ComponentType::Disk,
         ComponentType::Memory,
+        ComponentType::OS,
     );
 
 
@@ -29,8 +30,8 @@ fn main() {
     }
 
     // Show information
-    println!("{} \n", "Information:".yellow().bold());
+    println!("{} \n", "Information:".green().bold());
     for info in info_list {
-        println!("{}", info.get_info(cli.style).blue());
+        println!("{}", info.get_info(cli.style));
     }
 }

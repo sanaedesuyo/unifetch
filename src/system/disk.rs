@@ -1,3 +1,4 @@
+use colored::Colorize;
 use crate::cli::args::DisplayStyle;
 use crate::system::component::Component;
 
@@ -24,7 +25,7 @@ impl DiskInfo {
 
 impl Component for DiskInfo {
     fn get_info(&self, style: DisplayStyle) -> String {
-        let info = String::from("Disk:");
+        let info = format!("{}:", "Disk".blue());
 
         // Write disk name
         let info = format!("{} {}", info, self.name);
@@ -34,17 +35,17 @@ impl Component for DiskInfo {
         }
 
         // Write disk total space and available space
-        let info = format!("{}\n\t- Total space: {:.2}GB", info, self.total_space as f64 / 1024f64.powi(3));
-        let info = format!("{}\n\t- Available space: {:.2}GB", info, self.available_space as f64 / 1024f64.powi(3));
-        let info = format!("{}\n\t- Occupancy: {:.2}%", info, 100f64 - self.available_space as f64 / self.total_space as f64 * 100f64);
+        let info = format!("{}\n\t- {}: {:.2}GB", info, "Total space".yellow(), self.total_space as f64 / 1024f64.powi(3));
+        let info = format!("{}\n\t- {}: {:.2}GB", info, "Available space".yellow(), self.available_space as f64 / 1024f64.powi(3));
+        let info = format!("{}\n\t- {}: {:.2}%", info, "Occupancy".yellow(), 100f64 - self.available_space as f64 / self.total_space as f64 * 100f64);
 
         if style == DisplayStyle::Default {
             return info;
         }
 
         // Write disk file system and disk type
-        let info = format!("{}\n\t- Disk type: {}",info, self.disk_type);
-        let info = format!("{}\n\t- File system: {}", info, self.file_system);
+        let info = format!("{}\n\t- {}: {}", info, "Disk type".yellow(), self.disk_type);
+        let info = format!("{}\n\t- {}: {}", info, "File system".yellow(), self.file_system);
 
         info
     }

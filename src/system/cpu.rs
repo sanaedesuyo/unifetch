@@ -1,3 +1,4 @@
+use colored::Colorize;
 use crate::cli::args::DisplayStyle;
 use crate::system::component::Component;
 
@@ -27,7 +28,7 @@ impl CpuInfo {
 
 impl Component for CpuInfo {
     fn get_info(&self, style: DisplayStyle) -> String {
-        let mut info = String::from("CPU:");
+        let mut info = format!("{}:", "CPU".blue());
 
         // Write CPU name
         info = format!("{} {}", info, self.name);
@@ -37,16 +38,16 @@ impl Component for CpuInfo {
         }
 
         // Write CPU cores
-        info = format!("{}\n\t- Cores: {}", info, self.cores);
+        info = format!("{}\n\t- {}: {}", info, "Cores".yellow(), self.cores);
 
         if style == DisplayStyle::Default {
             return info;
         }
 
         // Write CPU usage
-        info = format!("{}\n\t- Usage: {:.1}%", info, self.usage);
+        info = format!("{}\n\t- {}: {:.1}%", info, "Usage".yellow(), self.usage);
         // Write CPU frequency
-        info = format!("{}\n\t- Frequency: {}MHz", info, self.frequency);
+        info = format!("{}\n\t- {}: {}MHz", info, "Frequency".yellow(), self.frequency);
 
         info
     }

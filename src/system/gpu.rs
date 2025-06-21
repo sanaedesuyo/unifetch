@@ -1,3 +1,4 @@
+use colored::Colorize;
 use crate::cli::args::DisplayStyle;
 use crate::system::component::Component;
 
@@ -28,7 +29,7 @@ impl GpuInfo {
 
 impl Component for GpuInfo {
     fn get_info(&self, style: DisplayStyle) -> String {
-        let mut info = String::from("GPU:");
+        let mut info = format!("{}:", "GPU".blue());
 
         // Write GPU name
         info = format!("{} {}", info, self.name);
@@ -38,15 +39,15 @@ impl Component for GpuInfo {
         }
 
         // Write GPU RAM and driver version
-        info = format!("{}\n\t- VRAM: {:.1}GB", info, self.adapter_ram as f64 / 1024u64.pow(3) as f64);
-        info = format!("{}\n\t- Driver version: {}", info, self.driver);
+        info = format!("{}\n\t- {}: {:.1}GB", info, "VRAM".yellow(), self.adapter_ram as f64 / 1024u64.pow(3) as f64);
+        info = format!("{}\n\t- {}: {}", info, "Driver version".yellow(), self.driver);
 
         if style == DisplayStyle::Default {
             return info;
         }
 
-        info = format!("{}\n\t- Status: {}", info, self.status);
-        info = format!("{}\n\t- Resolution: {}x{}", info, self.horizontal_resolution, self.vertical_resolution);
+        info = format!("{}\n\t- {}: {}", info, "Status".yellow(), self.status);
+        info = format!("{}\n\t- {}: {}x{}", info, "Resolution".yellow(), self.horizontal_resolution, self.vertical_resolution);
 
         info
     }

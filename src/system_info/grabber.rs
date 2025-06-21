@@ -8,6 +8,7 @@ pub enum ComponentType {
     Gpu,
     Disk,
     Memory,
+    OS,
 }
 
 pub fn grab(sys: &mut System, component_type: &ComponentType) -> Result<Vec<Box<dyn Component>>, WMIError> {
@@ -17,7 +18,8 @@ pub fn grab(sys: &mut System, component_type: &ComponentType) -> Result<Vec<Box<
         ComponentType::Cpu => info_grab::CpuGrabber::grab(&sys),
         ComponentType::Gpu => info_grab::GpuGrabber::grab(&sys),
         ComponentType::Disk => info_grab::DiskGrabber::grab(&sys),
-        ComponentType::Memory => {info_grab::MemoryGrabber::grab(&sys)},
+        ComponentType::Memory => info_grab::MemoryGrabber::grab(&sys),
+        ComponentType::OS => info_grab::OSGrabber::grab(&sys),
     }
 }
 
@@ -32,6 +34,7 @@ pub mod info_grab {
     #[cfg(target_os = "windows")]
     use wmi::{WMIError};
     use crate::system::memory::MemoryInfo;
+    use crate::system::os::OSInfo;
 
     pub trait Grabber {
         fn grab(sys: &System) -> Result<Vec<Box<dyn Component>>, WMIError>;
@@ -159,6 +162,29 @@ pub mod info_grab {
             ) as Box<dyn Component>];
 
             Ok(memory_info)
+        }
+    }
+
+    pub struct OSGrabber;
+    impl Grabber for OSGrabber {
+        fn grab(_sys: &System) -> Result<Vec<Box<dyn Component>>, WMIError> {
+            let mut os_info = Vec::new();
+
+            let name = match System::long_os_version() {
+                Some(name) => name,
+                None => { return Err(WMIError::ResultEmpty) }
+            };
+
+            let host_name = match System::host_name() {
+                Some(name) => name,
+                None => { return Err(WMIError::ResultEmpty) }
+            };
+
+            os_info.push(Box::new(OSInfo::new(
+                name, host_name
+            )) as Box<dyn Component>);
+
+            Ok(os_info)
         }
     }
 }

@@ -9,5 +9,5 @@ sysinfo = "0.35.2"
 wmi = "0.17.2"
 colored = "3.0.0"
 
-[build]
-target-dir = "./bin"
+[build-dependencies]
+winres = "0.1.12"

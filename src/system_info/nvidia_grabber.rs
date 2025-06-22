@@ -34,10 +34,10 @@ impl Grabber for NvidiaGrabber {
                             }
                         }
                     }
-                    _ => { return Err(WMIError::ResultEmpty) }
+                    _ => { return Err(WMIError::SerdeError("nvml didn't detect any NVIDIA device.".into())); }
                 }
             }
-            _ => { return Err(WMIError::ResultEmpty) }
+            _ => { return Err(WMIError::SerdeError("failed to initialize nvml".into())) }
         }
 
         Ok(nvidia_gpu_info)

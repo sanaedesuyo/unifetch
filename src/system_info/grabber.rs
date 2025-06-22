@@ -76,13 +76,13 @@ pub mod info_grab {
                     .ok();
 
                 let output = match output {
-                    None => { return Err(WMIError::ResultEmpty) }
+                    None => { return Err(WMIError::SerdeError("wmic returned empty result for request.".into())) }
                     Some(inner) => { inner }
                 };
 
                 let output = String::from_utf8(output.stdout).ok();
                 let output = match output {
-                    None => { return Err(WMIError::ResultEmpty) }
+                    None => { return Err(WMIError::SerdeError("failed to convert wmic query result to String object.".into())) }
                     Some(inner) => { inner }
                 };
 
@@ -187,12 +187,12 @@ pub mod info_grab {
 
             let name = match System::long_os_version() {
                 Some(name) => name,
-                None => { return Err(WMIError::ResultEmpty) }
+                None => { return Err(WMIError::SerdeError("failed to detect OS version.".into())) }
             };
 
             let host_name = match System::host_name() {
                 Some(name) => name,
-                None => { return Err(WMIError::ResultEmpty) }
+                None => { return Err(WMIError::SerdeError("failed to detect Host name.".into())) }
             };
 
             os_info.push(Box::new(OSInfo::new(

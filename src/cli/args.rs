@@ -7,10 +7,6 @@ pub struct Cli {
     /// Display style
     #[arg(short = 's', long = "style", value_enum, default_value_t = DisplayStyle::Default)]
     pub style: DisplayStyle,
-
-    /// Save current configuration
-    #[arg(long)]
-    pub save_config: bool,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]

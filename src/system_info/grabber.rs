@@ -35,6 +35,7 @@ pub mod info_grab {
     use wmi::{WMIError};
     use crate::system::memory::MemoryInfo;
     use crate::system::os::OSInfo;
+    use crate::system_info::nvidia_grabber::NvidiaGrabber;
 
     pub trait Grabber {
         fn grab(sys: &System) -> Result<Vec<Box<dyn Component>>, WMIError>;
@@ -102,17 +103,31 @@ pub mod info_grab {
                     let data_row = &output[gpu_index];
 
                     let data_table = data_row.split(",").map(|s| s.to_string()).collect::<Vec<String>>();
+                    let mut is_nvidia_gpu = false;
                     for (index, property_name) in header.iter().enumerate() {
                         match property_name.as_str().trim() {
-                            "Name" => { name = String::from(&data_table[index]); },
+                            "Name" => {
+                                name = String::from(&data_table[index]);
+
+                                if name.contains("NVIDIA") {
+                                    let n_gpu_info = NvidiaGrabber::grab(_sys).expect("failed to analysis NVIDIA GPU");
+                                    is_nvidia_gpu = true;
+                                    gpu_list.extend(n_gpu_info);
+                                    break;
+                                }
+                            },
                             "DriverVersion" => { driver = String::from(&data_table[index]); },
-                            "AdapterRAM" => { adapter_ram = u64::from_str_radix(&data_table[index], 10)?; },
+                            "AdapterRAM" => { adapter_ram = u64::from_str_radix(&data_table[index], 10).unwrap_or(0) ; },
                             "Status" => { status = String::from(&data_table[index]); },
-                            "CurrentHorizontalResolution" => { horizontal_resolution = u16::from_str_radix(&data_table[index], 10)?; },
-                            "CurrentVerticalResolution" => { vertical_resolution = u16::from_str_radix(&data_table[index], 10)?; },
+                            "CurrentHorizontalResolution" => { horizontal_resolution = u16::from_str_radix(&data_table[index], 10).unwrap_or(0); },
+                            "CurrentVerticalResolution" => { vertical_resolution = u16::from_str_radix(&data_table[index], 10).unwrap_or(0); },
 
                             _ => {},
                         }
+                    }
+
+                    if is_nvidia_gpu {
+                        continue;
                     }
 
                     // pack properties into struct

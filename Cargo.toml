@@ -8,6 +8,7 @@ clap = { version = "4.5.40", features = ["derive"] }
 sysinfo = "0.35.2"
 wmi = "0.17.2"
 colored = "3.0.0"
+nvml-wrapper = "0.11.0"
 
 [build-dependencies]
 winres = "0.1.12"
